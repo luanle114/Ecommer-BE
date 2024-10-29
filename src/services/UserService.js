@@ -1,5 +1,6 @@
 const User = require('../models/UserModel');
 const bcrypt = require('bcrypt');
+const { generalAccessToken, generalRefreshToken } = require('./JwtService');
 
 const createUser = async (user) => {
   return new Promise(async (resolve, reject) => {
@@ -25,13 +26,13 @@ const createUser = async (user) => {
         confirmPassword: hashedPassword,
         phone
       });
-      if(createdUser){
+      // if(createdUser){
         resolve({
           status: 'Success',
           message: 'User created successfully',
           data: createdUser,
         });
-      }
+      // }
     }
     catch(err){
       reject(err);
@@ -50,12 +51,26 @@ const loginUser = async (userLogin) => {
         });
       }
       const comparePass = bcrypt.compareSync(password, checkUserEmail.password);
-      console.log("~ ~ comparePass:", comparePass);
-      if(checkUserEmail)
+      if(!comparePass){
+        resolve({
+          status: "Error",
+          message: "The password or user is incorrect"
+        })
+      }
+      const access_token = await generalAccessToken({
+        id: checkUserEmail.id,
+        isAdmin: checkUserEmail.isAdmin,
+      })
+      
+      const refresh_token = await generalRefreshToken({
+        id: checkUserEmail.id,
+        isAdmin: checkUserEmail.isAdmin,
+      })
       resolve({
         status: 'Success',
         message: 'User created successfully',
-        data: checkUserEmail,
+        access_token,
+        refresh_token
       });
     }
     catch(err){
@@ -64,7 +79,56 @@ const loginUser = async (userLogin) => {
   });
 };
 
+const updateUser = async(id, data) => {
+  try {
+    const checkUser = await User.findOne({
+      _id: id
+    });
+    if(checkUser === null){
+      resolve({
+        status: "FAILED",
+        message: "The user is not exist"
+      });
+    }
+    
+    const updateUser = await User.findByIdAndUpdate(id, data, { new: true})
+    resolve({
+      status: "OK",
+      message: "User is updated successfully.",
+      data: updateUser
+    })
+  }
+  catch(error) {
+
+  }
+}
+
+const deleteUser = async (id) => {
+  try {
+    const checkUser = await User.findOne({
+      _id: id
+    });
+    if(checkUser === null){
+      resolve({
+        status: "FAILED",
+        message: "The user is not exist"
+      });
+    }
+    
+    await User.findByIdAndDelete(id)
+    resolve({
+      status: "OK",
+      message: "User is deleted successfully.",
+    })
+  }
+  catch(error) {
+    
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
+  updateUser,
+  deleteUser
 }
