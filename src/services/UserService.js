@@ -1,6 +1,6 @@
 const User = require('../models/UserModel');
 const bcrypt = require('bcrypt');
-const { generalAccessToken, generalRefreshToken } = require('./JwtService');
+const { generalAccessToken, generalRefreshToken, refreshTokenService } = require('./JwtService');
 
 const createUser = async (user) => {
   return new Promise(async (resolve, reject) => {
@@ -62,7 +62,7 @@ const loginUser = async (userLogin) => {
         isAdmin: checkUserEmail.isAdmin,
       })
       
-      const refresh_token = await generalRefreshToken({
+      const refresh_token = await refreshTokenService({
         id: checkUserEmail.id,
         isAdmin: checkUserEmail.isAdmin,
       })
@@ -80,55 +80,103 @@ const loginUser = async (userLogin) => {
 };
 
 const updateUser = async(id, data) => {
-  try {
-    const checkUser = await User.findOne({
-      _id: id
-    });
-    if(checkUser === null){
-      resolve({
-        status: "FAILED",
-        message: "The user is not exist"
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkUser = await User.findOne({
+        _id: id
       });
+      if(checkUser === null){
+        resolve({
+          status: "FAILED",
+          message: "The user is not exist"
+        });
+      }
+      
+      const updateUser = await User.findByIdAndUpdate(id, data, { new: true})
+      resolve({
+        status: "OK",
+        message: "User is updated successfully.",
+        data: updateUser
+      })
     }
-    
-    const updateUser = await User.findByIdAndUpdate(id, data, { new: true})
-    resolve({
-      status: "OK",
-      message: "User is updated successfully.",
-      data: updateUser
-    })
-  }
-  catch(error) {
-
-  }
+    catch(error) {
+  
+    }
+  });
 }
 
 const deleteUser = async (id) => {
-  try {
-    const checkUser = await User.findOne({
-      _id: id
-    });
-    if(checkUser === null){
-      resolve({
-        status: "FAILED",
-        message: "The user is not exist"
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkUser = await User.findOne({
+        _id: id
       });
+      if(checkUser === null){
+        resolve({
+          status: "FAILED",
+          message: "The user is not exist"
+        });
+      }
+      
+      await User.findByIdAndDelete(id);
+      resolve({
+        status: "OK",
+        message: "User is deleted successfully.",
+      })
     }
-    
-    await User.findByIdAndDelete(id)
-    resolve({
-      status: "OK",
-      message: "User is deleted successfully.",
-    })
-  }
-  catch(error) {
-    
-  }
+    catch(error) {
+      
+    }
+  });
+}
+
+const getAllUsers = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const allUser = await User.find();
+      console.log("~ ~ allUser:", allUser);
+  
+      resolve({
+        status: "OK",
+        message: "Get all users successfully.",
+        data: allUser
+      })
+    }
+    catch(error) {
+      
+    }
+  });
+}
+
+const getUser = async (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const user = await User.findOne({
+        _id: userId
+      });
+      if(user === null){
+        resolve({
+          status: "FAILED",
+          message: "The user is not exist"
+        });
+      }
+      resolve({
+        status: "OK",
+        message: "Get user successfully.",
+        data: user
+      })
+    }
+    catch(error) {
+      
+    }
+  });
 }
 
 module.exports = {
   createUser,
   loginUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  getAllUsers,
+  getUser,
 }

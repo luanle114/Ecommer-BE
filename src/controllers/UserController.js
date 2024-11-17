@@ -1,4 +1,5 @@
 const UserService = require("../services/UserService")
+const JwtService = require("../services/JwtService")
 
 const createUser = async (req, res) => {
   try {
@@ -85,14 +86,65 @@ const updateUser = async(req, res) => {
 const deleteUser = async(req, res) => {
   try {
     const userId = req.params.id;
-    const data = req.body;
     if(!userId){
       return res.status(400).json({
         status: "Error",
         message: "The user id is required"
       })
     }
-    const response = await UserService.deleteUser(userId, data);
+    const response = await UserService.deleteUser(userId);
+    return res.status(200).json(response);
+  }
+  catch(error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+}
+
+const getAllUsers = async(req, res) => {
+  try {
+    const response = await UserService.getAllUsers();
+    return res.status(200).json(response);
+  }
+  catch(error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+}
+
+const getUser = async(req, res) => {
+  try {
+    const userId = req.params.id;
+    if(!userId){
+      return res.status(400).json({
+        status: "Error",
+        message: "The user id is required"
+      })
+    }
+
+    const response = await UserService.getUser(userId);
+    return res.status(200).json(response);
+  }
+  catch(error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+}
+
+const refreshToken = async(req, res) => {
+  try {
+    const token = req.headers.token.split(' ')[1];
+    if(!token){
+      return res.status(400).json({
+        status: "Error",
+        message: "The token id is required"
+      })
+    }
+
+    const response = await JwtService.refreshTokenService(token);
     return res.status(200).json(response);
   }
   catch(error) {
@@ -106,5 +158,8 @@ module.exports = {
   createUser,
   loginUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  getAllUsers,
+  getUser,
+  refreshToken,
 };
