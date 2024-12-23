@@ -1,30 +1,16 @@
-const ProductService = require("../services/UserService")
+const ProductService = require("../services/ProductService")
 
 const createProduct = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, phone } = req.body;
-    const reg = /^\w+([-+.']\w+)*@\w+([-+.']\w+)*\.\w+([-+.']\w+)*$/;
-    const isCheckEmail = reg.test(email);
-    if(!name || !email || !password || !confirmPassword || !phone){
+    const { name, image, type, price, countInStock, rating } = req.body;
+    if(!name || !image || !type || !price || !countInStock || !rating){
       return res.status(400).json({
-        status: 'Error to create user',
+        status: 'Error to create produt',
         message: 'Please fill in all fields',
       });
     }
-    if(!isCheckEmail){
-      return res.status(400).json({
-        status: 'Error to create user',
-        message: 'Email is invalid',
-      });
-    }
-    if(password !== confirmPassword){
-      return res.status(400).json({
-        status: 'Error to create user',
-        message: 'Password and Confirm Password are not the same',
-      })
-    }
-    const response = await UserService.createUser(req.body);
-    return res.status(200).json(response);
+    const respsonse = await ProductService.createProduct(req.body);
+    return res.status(200).json(respsonse);
   } catch (error) {
     return res.status(404).json({
       message: error.message,
@@ -32,6 +18,48 @@ const createProduct = async (req, res) => {
   }
 };
 
+const updateProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    if(!productId){
+      return res.status(400).json({
+        status: 'Error to update product.',
+        message: 'This product id is required.'
+      })
+    }
+
+    const response = await ProductService.updateProduct(productId, req.body);
+    return res.status(200).json(response);
+  }
+  catch(error){
+    return res.status(404).json({
+      message: error.message,
+    })
+  }
+};
+
+const getProductDetails = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    if(!productId){
+      return res.status(400).json({
+        status: 'Error',
+        message: 'The product is required.'
+      });
+    }
+
+    const response = await ProductService.getProductDetails(productId);
+    return res.status(200).json(response)
+  }
+  catch(error) {
+    return res.status(404).json({
+      message: error
+    })
+  }
+};
+
 module.exports = {
   createProduct,
+  updateProduct,
+  getProductDetails,
 };

@@ -134,7 +134,6 @@ const getAllUsers = async () => {
   return new Promise(async (resolve, reject) => {
     try {
       const allUser = await User.find();
-      console.log("~ ~ allUser:", allUser);
   
       resolve({
         status: "OK",
