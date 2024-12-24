@@ -58,8 +58,43 @@ const getProductDetails = async (req, res) => {
   }
 };
 
+const deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    if(!productId){
+      return res.status(400).json({
+        status: 'Error',
+        message: 'The product is required.'
+      });
+    }
+
+    const response = await ProductService.deleteProduct(productId);
+    return res.status(200).json(response)
+  }
+  catch(error) {
+    return res.status(404).json({
+      message: error
+    })
+  }
+};
+
+const getAllProducts = async (req, res) => {
+  try {
+    const { page_size, page_index, sort, filter } = req.query;
+    const response = await ProductService.getAllProducts(Number(page_size), Number(page_index), sort, filter );
+    return res.status(200).json(response)
+  }
+  catch(error) {
+    return res.status(404).json({
+      message: error
+    })
+  }
+};
+
 module.exports = {
   createProduct,
   updateProduct,
+  deleteProduct,
   getProductDetails,
+  getAllProducts,
 };
