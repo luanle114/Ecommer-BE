@@ -41,7 +41,7 @@ const createUser = async (user) => {
 };
 const loginUser = async (userLogin) => {
   return new Promise(async (resolve, reject) => {
-    const { name, email, password, confirmPassword, phone } = userLogin;
+    const { email, password } = userLogin;
     try{
       const checkUserEmail = await User.findOne({ email: email });
       if(checkUserEmail === null){
@@ -62,7 +62,7 @@ const loginUser = async (userLogin) => {
         isAdmin: checkUserEmail.isAdmin,
       })
       
-      const refresh_token = await refreshTokenService({
+      const refresh_token = await generalRefreshToken({
         id: checkUserEmail.id,
         isAdmin: checkUserEmail.isAdmin,
       })

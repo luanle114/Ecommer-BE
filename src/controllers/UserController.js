@@ -34,10 +34,10 @@ const createUser = async (req, res) => {
 };
 const loginUser = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, phone } = req.body;
+    const { email, password } = req.body;
     const reg = /^\w+([-+.']\w+)*@\w+([-+.']\w+)*\.\w+([-+.']\w+)*$/;
     const isCheckEmail = reg.test(email);
-    if(!name || !email || !password || !confirmPassword || !phone){
+    if(!email || !password){
       return res.status(400).json({
         status: 'Error to create user',
         message: 'Please fill in all fields',
@@ -48,12 +48,6 @@ const loginUser = async (req, res) => {
         status: 'Error to create user',
         message: 'Email is invalid',
       });
-    }
-    if(password !== confirmPassword){
-      return res.status(400).json({
-        status: 'Error to create user',
-        message: 'Password and Confirm Password are not the same',
-      })
     }
     const response = await UserService.loginUser(req.body);
     return res.status(200).json(response);
