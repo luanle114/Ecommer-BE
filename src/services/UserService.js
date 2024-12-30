@@ -46,7 +46,7 @@ const loginUser = async (userLogin) => {
       const checkUserEmail = await User.findOne({ email: email });
       if(checkUserEmail === null){
         resolve({
-          status: 'Error to login user',
+          status: 'Error',
           message: 'Email not exists',
         });
       }

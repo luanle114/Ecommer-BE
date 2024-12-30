@@ -4,6 +4,7 @@ const { default: mongoose } = require('mongoose');
 const routes = require('./routes');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 dotenv.config();
 
 const app = express();

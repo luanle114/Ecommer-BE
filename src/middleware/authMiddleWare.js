@@ -11,8 +11,7 @@ const authMiddleWare = (req, res, next) => {
         status: 'Error',
       })
     }
-    const { payload } = user;
-    if(payload?.isAdmin){
+    if(user?.isAdmin){
       next();
     }
     else{
@@ -34,8 +33,7 @@ const authUserMiddleWare = (req, res, next) => {
         status: 'Error',
       })
     }
-    const { payload } = user;
-    if(payload?.isAdmin || payload?.id === userId){
+    if(user?.isAdmin || user?.id === userId){
       next();
     }
     else{
