@@ -1,5 +1,5 @@
-const UserService = require("../services/UserService")
-const JwtService = require("../services/JwtService")
+const UserService = require("../services/UserService");
+const JwtService = require("../services/JwtService");
 
 const createUser = async (req, res) => {
   try {
@@ -32,6 +32,7 @@ const createUser = async (req, res) => {
     });
   }
 };
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -50,13 +51,27 @@ const loginUser = async (req, res) => {
       });
     }
     const response = await UserService.loginUser(req.body);
-    const { refreshToken, ...newResponse } = response;
-    res.cookie('refresh_token', refreshToken, {
+    const { refresh_token, ...newResponse } = response;
+    res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
       secure: false,
-      samesite: 'strictS',
+      samesite: 'strict',
     });
     return res.status(200).json(newResponse);
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+
+const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie('refresh_token');
+    return res.status(200).json({
+      status: 'Success',
+      message: 'Logout successfully',
+    });
   } catch (error) {
     return res.status(404).json({
       message: error.message,
@@ -81,7 +96,7 @@ const updateUser = async(req, res) => {
       message: error.message,
     });
   }
-}
+};
 
 const deleteUser = async(req, res) => {
   try {
@@ -100,7 +115,7 @@ const deleteUser = async(req, res) => {
       message: error.message,
     });
   }
-}
+};
 
 const getAllUsers = async(req, res) => {
   try {
@@ -112,7 +127,7 @@ const getAllUsers = async(req, res) => {
       message: error.message,
     });
   }
-}
+};
 
 const getUser = async(req, res) => {
   try {
@@ -132,7 +147,7 @@ const getUser = async(req, res) => {
       message: error.message,
     });
   }
-}
+};
 
 const refreshToken = async(req, res) => {
   try {
@@ -152,11 +167,12 @@ const refreshToken = async(req, res) => {
       message: error.message,
     });
   }
-}
+};
 
 module.exports = {
   createUser,
   loginUser,
+  logoutUser,
   updateUser,
   deleteUser,
   getAllUsers,

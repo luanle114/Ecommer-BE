@@ -17,10 +17,10 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: Number, required: true
     },
-    access_token: {
+    address: {
       type: String
     },
-    refresh_token: {
+    avatar: {
       type: String
     },
   },

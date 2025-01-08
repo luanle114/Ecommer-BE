@@ -16,6 +16,7 @@ app.get('/', (req, res) => {
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 routes(app);
 
