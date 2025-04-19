@@ -22,7 +22,13 @@ const productSchema = new mongoose.Schema(
     },
     description: {
       type: String
-    }
+    },
+    discount: {
+      type: Number
+    },
+    sold: {
+      type: Number
+    },
   }
 );
 

@@ -9,8 +9,8 @@ const createProduct = async (req, res) => {
         message: 'Please fill in all fields',
       });
     }
-    const respsonse = await ProductService.createProduct(req.body);
-    return res.status(200).json(respsonse);
+    const response = await ProductService.createProduct(req.body);
+    return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
       message: error.message,
